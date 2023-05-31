@@ -1,118 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Score App</title>
-  <style>
-    .score-button {
-      background-color: white;
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin: 5px;
-      cursor: pointer;
-    }
-    .score-button.selected {
-      background-color: orange;
-    }
-  </style>
-</head>
-<body>
-  <h1>Score App</h1>
-  
-  <label for="name-input">Your Name:</label>
-  <input type="text" id="name-input" placeholder="Enter your name">
-  
-  <h2>Rate the items:</h2>
-  <ul id="item-list"></ul>
-  
-  <button id="add-new-button">Add new</button>
-  
-  <div id="new-suggestion" style="display: none;">
-    <input type="text" id="new-suggestion-input" placeholder="Enter your suggestion">
-    <button id="save-suggestion-button">Save</button>
-  </div>
-
-  <script>
-    const itemList = [
-      { name: 'Item 1', score: 0 },
-      { name: 'Item 2', score: 0 },
-      { name: 'Item 3', score: 0 },
-      { name: 'Item 4', score: 0 },
-      { name: 'Item 5', score: 0 }
-    ];
-
-    const itemContainer = document.getElementById('item-list');
-    const addNewButton = document.getElementById('add-new-button');
-    const newSuggestionContainer = document.getElementById('new-suggestion');
-    const newSuggestionInput = document.getElementById('new-suggestion-input');
-    const saveSuggestionButton = document.getElementById('save-suggestion-button');
-    const nameInput = document.getElementById('name-input');
-
-    // Display the items and score buttons
-    itemList.forEach((item, index) => {
-      const listItem = document.createElement('li');
-      listItem.innerHTML = `${item.name}: `;
-      
-      for (let i = 1; i <= 5; i++) {
-        const scoreButton = document.createElement('button');
-        scoreButton.classList.add('score-button');
-        scoreButton.innerHTML = i;
-        
-        scoreButton.addEventListener('click', () => {
-          // Update the score and highlight the selected button
-          item.score = i;
-          highlightSelectedButton(scoreButton);
-        });
-        
-        listItem.appendChild(scoreButton);
-      }
-      
-      itemContainer.appendChild(listItem);
-    });
-    
-    // Highlight the selected score button
-    function highlightSelectedButton(button) {
-      const buttons = button.parentNode.getElementsByClassName('score-button');
-      Array.from(buttons).forEach(btn => {
-        btn.classList.remove('selected');
-      });
-      button.classList.add('selected');
-    }
-    
-    // Show the new suggestion field when "Add new" button is clicked
-    addNewButton.addEventListener('click', () => {
-      newSuggestionContainer.style.display = 'block';
-    });
-    
-    // Save the new suggestion and hide the new suggestion field
-    saveSuggestionButton.addEventListener('click', () => {
-      const suggestion = newSuggestionInput.value;
-      if (suggestion) {
-        itemList.push({ name: suggestion, score: 0 });
-        
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `${suggestion}: `;
-        
-        for (let i = 1; i <= 5; i++) {
-          const scoreButton = document.createElement('button');
-          scoreButton.classList.add('score-button');
-          scoreButton.innerHTML = i;
-          
-          scoreButton.addEventListener('click', () => {
-            // Update the score and highlight the selected button
-            itemList[itemList.length - 1].score = i;
-            highlightSelectedButton(scoreButton);
-          });
-          
-          listItem.appendChild(scoreButton);
+    <title>Item Scoring App</title>
+    <style>
+        .score-button {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
         }
         
-        itemContainer.appendChild(listItem);
+        .score-button.selected {
+            background-color: orange;
+        }
         
-        // Clear the input and hide the new suggestion field
-        newSuggestionInput.value = '';
-        newSuggestionContainer.style.display = 'none';
-      }
-    });
-  </script>
+        .item-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .item-name {
+            margin-right: 10px;
+        }
+        
+        #submit-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        
+        #name-input {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Item Scoring App</h1>
+    
+    <input type="text" id="name-input" placeholder="Enter your name">
+    
+    <div id="item-list"></div>
+    
+    <button id="submit-button">Submit</button>
+    
+    <script>
+        // List of items
+        const items = [
+            'Item 1',
+            'Item 2',
+            'Item 3',
+            'Item 4',
+            'Item 5'
+        ];
+        
+        // Function to create buttons for each item
+        function createScoreButtons() {
+            const itemList = document.getElementById('item-list');
+            
+            items.forEach((item, index) => {
+                const itemContainer = document.createElement('div');
+                itemContainer.classList.add('item-container');
+                
+                const itemName = document.createElement('span');
+                itemName.classList.add('item-name');
+                itemName.textContent = `${index + 1}. ${item}`;
+                
+                const scoreButtons = document.createElement('div');
+                
+                // Add score buttons from 1 to 5
+                for (let i = 1; i <= 5; i++) {
+                    const button = document.createElement('button');
+                    button.classList.add('score-button');
+                    button.textContent = i;
+                    
+                    // Add click event listener to handle button selection
+                    button.addEventListener('click', function() {
+                        // Remove selected class from all buttons in the same group
+                        const buttons = scoreButtons.getElementsByClassName('score-button');
+                        Array.from(buttons).forEach(btn => btn.classList.remove('selected'));
+                        
+                        // Add selected class to the clicked button
+                        this.classList.add('selected');
+                    });
+                    
+                    scoreButtons.appendChild(button);
+                }
+                
+                itemContainer.appendChild(itemName);
+                itemContainer.appendChild(scoreButtons);
+                itemList.appendChild(itemContainer);
+            });
+        }
+        
+        // Submit button event listener
+        const submitButton = document.getElementById('submit-button');
+        submitButton.addEventListener('click', function() {
+            const nameInput = document.getElementById('name-input');
+            const name = nameInput.value;
+            
+            const selectedButtons = document.getElementsByClassName('score-button selected');
+            const scores = Array.from(selectedButtons).map(btn => btn.textContent);
+            
+            // Save the data to localStorage
+            const data = {
+                name: name,
+                scores: scores
+            };
+            
+            // Retrieve existing data from localStorage or initialize an empty array
+            const savedData = JSON.parse(localStorage.getItem('scoresData')) || [];
+            
+            // Add the current data to the savedData array
+            savedData.push(data);
+            
+            // Store the updated savedData array in localStorage
+            localStorage.setItem('scoresData', JSON.stringify(savedData));
+            
+            // Clear input and selected buttons after submitting
+            nameInput.value = '';
+            const buttons = document.getElementsByClassName('score-button');
+            Array.from(buttons).forEach(btn => btn.classList.remove('selected'));
+        });
+        
+        // Create the score buttons when the page loads
+        window.addEventListener('DOMContentLoaded', createScoreButtons);
+    </script>
 </body>
 </html>
