@@ -1,7 +1,118 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Score App</title>
+  <style>
+    .score-button {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    .score-button.selected {
+      background-color: orange;
+    }
+  </style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+  <h1>Score App</h1>
+  
+  <label for="name-input">Your Name:</label>
+  <input type="text" id="name-input" placeholder="Enter your name">
+  
+  <h2>Rate the items:</h2>
+  <ul id="item-list"></ul>
+  
+  <button id="add-new-button">Add new</button>
+  
+  <div id="new-suggestion" style="display: none;">
+    <input type="text" id="new-suggestion-input" placeholder="Enter your suggestion">
+    <button id="save-suggestion-button">Save</button>
+  </div>
+
+  <script>
+    const itemList = [
+      { name: 'Item 1', score: 0 },
+      { name: 'Item 2', score: 0 },
+      { name: 'Item 3', score: 0 },
+      { name: 'Item 4', score: 0 },
+      { name: 'Item 5', score: 0 }
+    ];
+
+    const itemContainer = document.getElementById('item-list');
+    const addNewButton = document.getElementById('add-new-button');
+    const newSuggestionContainer = document.getElementById('new-suggestion');
+    const newSuggestionInput = document.getElementById('new-suggestion-input');
+    const saveSuggestionButton = document.getElementById('save-suggestion-button');
+    const nameInput = document.getElementById('name-input');
+
+    // Display the items and score buttons
+    itemList.forEach((item, index) => {
+      const listItem = document.createElement('li');
+      listItem.innerHTML = `${item.name}: `;
+      
+      for (let i = 1; i <= 5; i++) {
+        const scoreButton = document.createElement('button');
+        scoreButton.classList.add('score-button');
+        scoreButton.innerHTML = i;
+        
+        scoreButton.addEventListener('click', () => {
+          // Update the score and highlight the selected button
+          item.score = i;
+          highlightSelectedButton(scoreButton);
+        });
+        
+        listItem.appendChild(scoreButton);
+      }
+      
+      itemContainer.appendChild(listItem);
+    });
+    
+    // Highlight the selected score button
+    function highlightSelectedButton(button) {
+      const buttons = button.parentNode.getElementsByClassName('score-button');
+      Array.from(buttons).forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      button.classList.add('selected');
+    }
+    
+    // Show the new suggestion field when "Add new" button is clicked
+    addNewButton.addEventListener('click', () => {
+      newSuggestionContainer.style.display = 'block';
+    });
+    
+    // Save the new suggestion and hide the new suggestion field
+    saveSuggestionButton.addEventListener('click', () => {
+      const suggestion = newSuggestionInput.value;
+      if (suggestion) {
+        itemList.push({ name: suggestion, score: 0 });
+        
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `${suggestion}: `;
+        
+        for (let i = 1; i <= 5; i++) {
+          const scoreButton = document.createElement('button');
+          scoreButton.classList.add('score-button');
+          scoreButton.innerHTML = i;
+          
+          scoreButton.addEventListener('click', () => {
+            // Update the score and highlight the selected button
+            itemList[itemList.length - 1].score = i;
+            highlightSelectedButton(scoreButton);
+          });
+          
+          listItem.appendChild(scoreButton);
+        }
+        
+        itemContainer.appendChild(listItem);
+        
+        // Clear the input and hide the new suggestion field
+        newSuggestionInput.value = '';
+        newSuggestionContainer.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
